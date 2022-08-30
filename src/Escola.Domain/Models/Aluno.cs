@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Escola.Domain.DTO;
 
 namespace Escola.Domain.Models
 {
@@ -14,5 +15,19 @@ namespace Escola.Domain.Models
         public string Sobrenome { get; set; }
         public string Email { get; set; }
         public DateTime DataNascimento { get; set; }
+
+        public Aluno(AlunoDTO aluno)
+        {
+            Id = aluno.Id;
+            Nome = aluno.Nome;
+            Email = aluno.Email;
+            Matricula = aluno.Matricula;
+            Sobrenome = aluno.Sobrenome;
+            DataNascimento = aluno.DataNascimento;
+        }
+        public Aluno()
+        {
+            
+        }
     }
 }

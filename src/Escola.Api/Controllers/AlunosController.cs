@@ -18,6 +18,24 @@ namespace Escola.Api.Controllers
         {
             _alunoServico = alunoServico;
         }
+        [HttpGet]
+        public IActionResult ObterTodos(){
+            try{
+             return Ok(_alunoServico.ObterTodos());
+            }
+            catch{
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpGet("{id}")]
+        public IActionResult ObterPorId(Guid id){
+            try{
+             return Ok(_alunoServico.ObterPorId(id));
+            }
+            catch{
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
         [HttpPost]
         public IActionResult Inserir (AlunoDTO aluno){
             try{
@@ -26,7 +44,28 @@ namespace Escola.Api.Controllers
             catch{
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            return Ok();
+            return StatusCode(StatusCodes.Status201Created);
+        }
+        [HttpPut("{id}")]
+        public IActionResult Atualizar(Guid id, [FromBody] AlunoDTO aluno){
+            try{
+                aluno.Id=id;
+                _alunoServico.Atualizar(aluno);
+                return Ok();
+            }
+            catch{
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpDelete("{id}")]
+        public IActionResult Deletar(Guid id){
+            try{
+                _alunoServico.Excluir(id);
+                return StatusCode(StatusCodes.Status204NoContent);
+            }
+            catch{
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

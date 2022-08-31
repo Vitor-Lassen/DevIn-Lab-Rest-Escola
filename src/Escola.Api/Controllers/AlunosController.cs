@@ -22,7 +22,7 @@ namespace Escola.Api.Controllers
         // public IActionResult ObterTodos(){
             
         // }
-        [HttpPost("inserir")]
+        [HttpPost]
         public IActionResult Inserir (AlunoDTO aluno){
             try{
                 _alunoServico.Inserir(aluno);

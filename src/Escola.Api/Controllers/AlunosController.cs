@@ -18,10 +18,6 @@ namespace Escola.Api.Controllers
         {
             _alunoServico = alunoServico;
         }
-        // [HttpGet("ObterTodos")]
-        // public IActionResult ObterTodos(){
-            
-        // }
         [HttpPost]
         public IActionResult Inserir (AlunoDTO aluno){
             try{

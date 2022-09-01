@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Escola.Domain.DTO;
 using Escola.Domain.Interfaces.Services;
+using Escola.Domain.Exceptions;
 
 namespace Escola.Api.Controllers
 {
@@ -41,8 +42,11 @@ namespace Escola.Api.Controllers
             try{
                 _alunoServico.Inserir(aluno);
             }
-            catch{
-                return StatusCode(StatusCodes.Status500InternalServerError);
+            catch (DuplicadoException ex){
+                return StatusCode(StatusCodes.Status406NotAcceptable, new ErrorDTO( ex.Message));
+            }
+            catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorDTO("Ocorreu um erro favor contactar a TI"));
             }
             return StatusCode(StatusCodes.Status201Created);
         }

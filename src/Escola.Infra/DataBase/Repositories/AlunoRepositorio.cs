@@ -27,6 +27,11 @@ namespace Escola.Infra.DataBase.Repositories
             _contexto.SaveChanges();
         }
 
+        public bool ExisteMatricula(int matricula)
+        {
+            return _contexto.Alunos.Any(x => x.Matricula == matricula);
+        }
+
         public void Inserir(Aluno aluno)
         {
             _contexto.Alunos.Add(aluno);

@@ -13,5 +13,6 @@ namespace Escola.Domain.Interfaces.Repositories
         void Inserir(Aluno aluno);
         void Excluir (Aluno aluno);
         void Atualizar (Aluno aluno);
+        bool ExisteMatricula(int matricula);
     }
 }

@@ -3,6 +3,7 @@ using Escola.Domain.Interfaces.Repositories;
 using Escola.Infra.DataBase.Repositories;
 using Escola.Domain.Services;
 using Escola.Infra.DataBase;
+using Escola.Api.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.MapControllers();
+app.UseMiddleware<ErrorMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

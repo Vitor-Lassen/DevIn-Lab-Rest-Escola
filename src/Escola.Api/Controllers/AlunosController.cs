@@ -39,15 +39,8 @@ namespace Escola.Api.Controllers
         }
         [HttpPost]
         public IActionResult Inserir (AlunoDTO aluno){
-            try{
-                _alunoServico.Inserir(aluno);
-            }
-            catch (DuplicadoException ex){
-                return StatusCode(StatusCodes.Status406NotAcceptable, new ErrorDTO( ex.Message));
-            }
-            catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorDTO("Ocorreu um erro favor contactar a TI"));
-            }
+            _alunoServico.Inserir(aluno);
+
             return StatusCode(StatusCodes.Status201Created);
         }
         [HttpPut("{id}")]

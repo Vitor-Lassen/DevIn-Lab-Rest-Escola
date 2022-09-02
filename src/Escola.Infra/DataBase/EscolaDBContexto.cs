@@ -13,7 +13,7 @@ namespace Escola.Infra.DataBase
         public DbSet<Aluno> Alunos {get; set;}
         
         protected override void OnConfiguring(DbContextOptionsBuilder options){
-            options.UseSqlServer("Password=YourStrong@Passw0rd;Persist Security Info=True;User ID=sa;Initial Catalog=EscolaDB;Data Source=tcp:localhost,1433");
+            options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=EscolaDB;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder){

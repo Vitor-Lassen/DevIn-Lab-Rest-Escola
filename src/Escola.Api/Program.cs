@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.MapControllers();
-app.UseMiddleware<ErrorMiddleware>();
+app.UseMiddleware<ErrorMiddleware>();//config=>errorMidd
 
 if (app.Environment.IsDevelopment())
 {

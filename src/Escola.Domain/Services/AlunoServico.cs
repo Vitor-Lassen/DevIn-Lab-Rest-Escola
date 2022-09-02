@@ -35,11 +35,23 @@ namespace Escola.Domain.Services
 
         public void Inserir(AlunoDTO aluno)
         {
-            //ToDo: Validar se já consta matricula.
+            
+            if(ObterIdade(aluno.DataNascimento) < 18)
+                throw new EhMenorIdadeException("O aluno precisa ser maior de Idade");
+
             if(_alunoRepositorio.ExisteMatricula(aluno.Matricula))
                 throw new DuplicadoException("Matricula já existente");
 
+
             _alunoRepositorio.Inserir(new Aluno(aluno));
+        }
+
+        public int ObterIdade(DateTime dataNascimento){
+            var idade = DateTime.Now.Year - dataNascimento.Year ;
+            if (dataNascimento.Month >  DateTime.Now.Month &&
+                dataNascimento.Date >  DateTime.Now.Date)
+                idade ++;
+            return idade;
         }
 
         public AlunoDTO ObterPorId(Guid id)

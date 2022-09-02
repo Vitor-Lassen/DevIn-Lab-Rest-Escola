@@ -31,19 +31,36 @@ namespace Escola.Api.Config
             HttpStatusCode status; 
             string message; 
 
+            // switch(ex)
+            // {
+            //     case DuplicadoException: 
+            //         status = HttpStatusCode.NotAcceptable;
+            //         message = ex.Message;
+            //         break;
+            //     default :
+            //         status = HttpStatusCode.InternalServerError;
+            //         message = "Ocorreu um erro favor contactar a TI";
+            //         break;
+            // }
             if (ex is DuplicadoException){
+                status = HttpStatusCode.NotAcceptable;
+                message = ex.Message;
+            }
+            if (ex is EhMenorIdadeException){
                 status = HttpStatusCode.NotAcceptable;
                 message = ex.Message;
             }
             else{
                 status = HttpStatusCode.InternalServerError;
                 message = "Ocorreu um erro favor contactar a TI";
+
             }
 
             var response = new ErrorDTO(message);
 
             context.Response.StatusCode = (int) status;
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+
+            return context.Response.WriteAsJsonAsync(response);
         }
     }
 }

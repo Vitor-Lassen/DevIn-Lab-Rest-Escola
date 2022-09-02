@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Escola.Domain.DTO;
 using Escola.Domain.Interfaces.Services;
 using Escola.Domain.Exceptions;
+using Escola.Domain.Models;
 
 namespace Escola.Api.Controllers
 {
@@ -20,9 +21,15 @@ namespace Escola.Api.Controllers
             _alunoServico = alunoServico;
         }
         [HttpGet]
-        public IActionResult ObterTodos(){
+        public IActionResult ObterTodos(int skip, int take){
             try{
-             return Ok(_alunoServico.ObterTodos());
+                var paginacao = new Paginacao(take,skip);
+
+                var totalRegistros = _alunoServico.ObterTotal();
+
+                Response.Headers.Add("X-Paginacao-TotalResgistros",totalRegistros.ToString() );
+
+                return Ok(_alunoServico.ObterTodos(paginacao));
             }
             catch{
                 return StatusCode(StatusCodes.Status500InternalServerError);

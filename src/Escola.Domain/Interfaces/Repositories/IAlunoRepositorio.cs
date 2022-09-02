@@ -8,11 +8,12 @@ namespace Escola.Domain.Interfaces.Repositories
 {
     public interface IAlunoRepositorio
     {
-        IList<Aluno> ObterTodos();
+        IList<Aluno> ObterTodos(Paginacao paginacao);
         Aluno ObterPorId(Guid id);
         void Inserir(Aluno aluno);
         void Excluir (Aluno aluno);
         void Atualizar (Aluno aluno);
         bool ExisteMatricula(int matricula);
+        public int ObterTotal();
     }
 }

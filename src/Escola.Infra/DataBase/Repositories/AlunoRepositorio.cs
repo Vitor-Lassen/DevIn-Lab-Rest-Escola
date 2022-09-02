@@ -43,9 +43,16 @@ namespace Escola.Infra.DataBase.Repositories
             return _contexto.Alunos.Find(id);
         }
 
-        public IList<Aluno> ObterTodos()
+        public IList<Aluno> ObterTodos(Paginacao paginacao)
         {
-            return _contexto.Alunos.ToList();
+            return _contexto.Alunos
+                            .Take(paginacao.Take)
+                            .Skip(paginacao.Skip)
+                            .ToList();
+        }
+        public int ObterTotal()
+        {
+            return _contexto.Alunos.Count();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Escola.Api.Controllers
             _alunoServico = alunoServico;
         }
         [HttpGet]
-        public IActionResult ObterTodos(int skip, int take){
+        public IActionResult ObterTodos(int skip = 0, int take = 5){
             try{
                 var paginacao = new Paginacao(take,skip);
 

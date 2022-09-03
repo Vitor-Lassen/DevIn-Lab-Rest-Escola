@@ -26,7 +26,8 @@ namespace Escola.Infra.DataBase.Mappings
 
             builder.HasOne(x => x.Materia)
                     .WithMany( x => x.NotasMaterias)
-                    .HasForeignKey( x=> x.MateriaId);
+                    .HasForeignKey( x=> x.MateriaId)
+                    .OnDelete(DeleteBehavior.Restrict);
             
             builder.HasOne(x => x.Boletim)
                     .WithMany(x => x.Notas)

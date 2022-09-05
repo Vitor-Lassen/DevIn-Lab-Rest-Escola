@@ -6,33 +6,24 @@ using Escola.Domain.Models;
 
 namespace Escola.Domain.DTO
 {
-    public class AlunoDTO
+    public class AlunoV2DTO
     {
-        public AlunoDTO()
+        public AlunoV2DTO()
         {
             
         }
-        public AlunoDTO(Aluno aluno)
+        public AlunoV2DTO(AlunoDTO aluno)
         {
             Id = aluno.Id;
             Nome = aluno.Nome;
             Email = aluno.Email;
-            Matricula = aluno.Matricula;
-            Sobrenome = aluno.Sobrenome;
-            DataNascimento = aluno.DataNascimento;
-        }
-        public AlunoDTO(AlunoV2DTO aluno)
-        {
-            Id = aluno.Id;
-            Nome = aluno.Nome;
-            Email = aluno.Email;
-            Matricula = aluno.RA;
+            RA = aluno.Matricula;
             Sobrenome = aluno.Sobrenome;
             DataNascimento = aluno.DataNascimento;
         }
 
         public Guid Id { get; set; } = Guid.NewGuid();
-        public int Matricula { get; set; }
+        public int RA { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public string Email { get; set; }

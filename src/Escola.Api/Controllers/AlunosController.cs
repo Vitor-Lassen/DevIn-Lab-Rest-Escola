@@ -35,6 +35,13 @@ namespace Escola.Api.Controllers
 
                 Response.Headers.Add("X-Paginacao-TotalResgistros",totalRegistros.ToString() );
 
+                Response.Cookies.Append("TesteCookie", 
+                            Newtonsoft.Json.JsonConvert.SerializeObject(paginacao),
+                            new CookieOptions(){
+                                Expires = DateTimeOffset.Now.AddDays(5),
+                                //MaxAge = new TimeSpan(5,0,0,0)
+                            });
+
                 return Ok(_alunoServico.ObterTodos(paginacao));
             }
             catch{
@@ -43,6 +50,7 @@ namespace Escola.Api.Controllers
         }
         [HttpGet("{id}")]
         public IActionResult ObterPorId(Guid id){
+            var cookie = Request.Cookies["TesteCookie"];
             AlunoDTO aluno;
             if (!_alunoCache.TryGetValue($"{id}", out aluno)){
                 aluno = _alunoServico.ObterPorId(id);

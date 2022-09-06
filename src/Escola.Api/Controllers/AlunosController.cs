@@ -9,6 +9,7 @@ using Escola.Domain.Interfaces.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Escola.Domain.Exceptions;
 using Escola.Domain.Models;
+using Escola.Api.Config;
 
 namespace Escola.Api.Controllers
 {
@@ -17,11 +18,13 @@ namespace Escola.Api.Controllers
     public class AlunosController : ControllerBase
     {
         private readonly IAlunoServico _alunoServico;
-        private readonly IMemoryCache _cache;
-        public AlunosController(IAlunoServico alunoServico, IMemoryCache cache)
+        private readonly CacheService<AlunoDTO> _alunoCache;
+        public AlunosController(IAlunoServico alunoServico, CacheService<AlunoDTO> alunoCache)
         {
+            alunoCache.Config("aluno",new TimeSpan(0,2,0));
+            _alunoCache = alunoCache;
             _alunoServico = alunoServico;
-            _cache = cache;
+           
         }
         [HttpGet]
         public IActionResult ObterTodos(int skip = 0, int take = 5){
@@ -41,9 +44,9 @@ namespace Escola.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult ObterPorId(Guid id){
             AlunoDTO aluno;
-            if (!_cache.TryGetValue<AlunoDTO>($"aluno:{id}", out aluno)){
+            if (!_alunoCache.TryGetValue($"{id}", out aluno)){
                 aluno = _alunoServico.ObterPorId(id);
-                _cache.Set($"aluno:{id}", aluno, new TimeSpan(0,2,0));
+                _alunoCache.Set(id.ToString(), aluno);
             }
             return Ok(aluno);
         }
@@ -58,7 +61,7 @@ namespace Escola.Api.Controllers
             
             aluno.Id=id;
             _alunoServico.Atualizar(aluno);
-            _cache.Set($"aluno:{id}", aluno, new TimeSpan(0,2,0));
+            _alunoCache.Set($"{id}", aluno);
             return Ok();
            
         }
@@ -66,7 +69,7 @@ namespace Escola.Api.Controllers
         public IActionResult Deletar(Guid id){
             
                 _alunoServico.Excluir(id);
-                _cache.Remove($"aluno:{id}");
+                _alunoCache.Remove($"{id}");
                 return StatusCode(StatusCodes.Status204NoContent);
         }
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Escola.Domain.DTO;
 using Escola.Domain.Interfaces.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Escola.Domain.Exceptions;
 using Escola.Domain.Models;
 
@@ -16,9 +17,11 @@ namespace Escola.Api.Controllers
     public class AlunosController : ControllerBase
     {
         private readonly IAlunoServico _alunoServico;
-        public AlunosController(IAlunoServico alunoServico)
+        private readonly IMemoryCache _cache;
+        public AlunosController(IAlunoServico alunoServico, IMemoryCache cache)
         {
             _alunoServico = alunoServico;
+            _cache = cache;
         }
         [HttpGet]
         public IActionResult ObterTodos(int skip = 0, int take = 5){
@@ -37,12 +40,12 @@ namespace Escola.Api.Controllers
         }
         [HttpGet("{id}")]
         public IActionResult ObterPorId(Guid id){
-            try{
-             return Ok(_alunoServico.ObterPorId(id));
+            AlunoDTO aluno;
+            if (!_cache.TryGetValue<AlunoDTO>($"aluno:{id}", out aluno)){
+                aluno = _alunoServico.ObterPorId(id);
+                _cache.Set($"aluno:{id}", aluno, new TimeSpan(0,2,0));
             }
-            catch{
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return Ok(aluno);
         }
         [HttpPost]
         public IActionResult Inserir (AlunoDTO aluno){
@@ -52,24 +55,19 @@ namespace Escola.Api.Controllers
         }
         [HttpPut("{id}")]
         public IActionResult Atualizar(Guid id, [FromBody] AlunoDTO aluno){
-            try{
-                aluno.Id=id;
-                _alunoServico.Atualizar(aluno);
-                return Ok();
-            }
-            catch{
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            
+            aluno.Id=id;
+            _alunoServico.Atualizar(aluno);
+            _cache.Set($"aluno:{id}", aluno, new TimeSpan(0,2,0));
+            return Ok();
+           
         }
         [HttpDelete("{id}")]
         public IActionResult Deletar(Guid id){
-            try{
+            
                 _alunoServico.Excluir(id);
+                _cache.Remove($"aluno:{id}");
                 return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch{
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
         }
     }
 }

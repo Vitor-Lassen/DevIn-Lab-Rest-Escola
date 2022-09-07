@@ -14,6 +14,9 @@ builder.Services.AddScoped<IAlunoServico,AlunoServico>();
 builder.Services.AddScoped<IMateriaRepositorio,MateriaRepositorio>();
 builder.Services.AddScoped<IMateriaServico, MateriaServico>();
 
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped(typeof(CacheService<>));
+
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();

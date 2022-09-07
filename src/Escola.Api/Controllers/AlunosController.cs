@@ -41,8 +41,16 @@ namespace Escola.Api.Controllers
                                 Expires = DateTimeOffset.Now.AddDays(5),
                                 //MaxAge = new TimeSpan(5,0,0,0)
                             });
+                var uri = $"{Request.Scheme}://{Request.Host}";
+                var alunos = new BaseDTO<IList<AlunoDTO>>(){
+                    Data = _alunoServico.ObterTodos(paginacao),
+                    Links = GetHateoasForAll(uri,take,skip, totalRegistros )};
 
-                return Ok(_alunoServico.ObterTodos(paginacao));
+                foreach (var aluno in alunos.Data){
+                    aluno.Links = GetHateoas(aluno, uri);
+                }
+
+                return Ok(alunos);
             }
             catch{
                 return StatusCode(StatusCodes.Status500InternalServerError);
@@ -51,10 +59,12 @@ namespace Escola.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult ObterPorId(Guid id){
             var cookie = Request.Cookies["TesteCookie"];
+            var uri = $"{Request.Scheme}://{Request.Host}";
             AlunoDTO aluno;
             if (!_alunoCache.TryGetValue($"{id}", out aluno)){
                 aluno = _alunoServico.ObterPorId(id);
                 _alunoCache.Set(id.ToString(), aluno);
+                aluno.Links = GetHateoas(aluno, uri);
             }
             return Ok(aluno);
         }
@@ -75,10 +85,83 @@ namespace Escola.Api.Controllers
         }
         [HttpDelete("{id}")]
         public IActionResult Deletar(Guid id){
-            
                 _alunoServico.Excluir(id);
                 _alunoCache.Remove($"{id}");
                 return StatusCode(StatusCodes.Status204NoContent);
+        }
+        private List<HateoasDTO> GetHateoas(AlunoDTO aluno, string baseURI){
+            var hateoas =  new List<HateoasDTO>() {
+                new HateoasDTO(){
+                    Rel = "self",
+                    Type = "GET", 
+                    URI = $"{baseURI}/api/alunos/{aluno.Id}" 
+                }, 
+                new HateoasDTO(){
+                    Rel = "aluno",
+                    Type = "PUT", 
+                    URI = $"{baseURI}/api/alunos/{aluno.Id}" 
+                },
+                new HateoasDTO(){
+                    Rel = "aluno",
+                    Type = "DELETE", 
+                    URI = $"{baseURI}/api/alunos/{aluno.Id}" 
+                }, 
+                new HateoasDTO(){
+                    Rel = "boletims",
+                    Type = "GET", 
+                    URI = $"{baseURI}/api/alunos/{aluno.Id}/boletims" 
+                }
+            };
+
+            if((DateTime.Now.Year - aluno.DataNascimento.Year) >= 24 ){
+                hateoas.Add(
+                        new HateoasDTO(){
+                        Rel = "MatricularAluno",
+                        Type = "POST", 
+                        URI = $"{baseURI}/api/alunos/{aluno.Id}/Matricular" 
+                    }
+                );
+            }
+            return hateoas;
+        }
+        private List<HateoasDTO> GetHateoasForAll( string baseURI, int take, int skip, int ultimo){
+             var hateoas = new List<HateoasDTO>() {
+                new HateoasDTO(){
+                    Rel = "self",
+                    Type = "GET", 
+                    URI = $"{baseURI}/api/alunos?skip={skip}&take={take}" 
+                }, 
+          
+                new HateoasDTO(){
+                    Rel = "aluno",
+                    Type = "POST", 
+                    URI = $"{baseURI}/api/alunos/" 
+                }
+            };
+            var razao = take - skip ;
+            if (skip != 0){
+                var newSkip =  skip - razao;
+                if (newSkip < 0 )
+                    newSkip = 0;
+                
+                hateoas.Add(new HateoasDTO(){
+                    Rel = "Prev",
+                    Type = "GET", 
+                    URI = $"{baseURI}/api/alunos?skip={newSkip}&take={take-razao}" 
+                });
+            }
+
+            if (take < ultimo){
+                
+                hateoas.Add(new HateoasDTO(){
+                    Rel = "Next",
+                    Type = "GET", 
+                    URI = $"{baseURI}/api/alunos?skip={skip+razao}&take={take+razao}" 
+                });    
+            }
+
+
+            return hateoas;
         }
     }
 }

@@ -19,5 +19,11 @@ namespace Escola.Domain.DTO
             Id = materia.Id;
             Nome = materia.Nome;
         }
+         public MateriaDTO(MateriaV2DTO materia)
+        {
+            Id = materia.Id;
+            Nome = materia.Disciplina;
+
+        }
     }
 }

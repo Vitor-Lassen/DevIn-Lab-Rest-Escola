@@ -12,7 +12,8 @@ using Escola.Domain.Models;
 namespace Escola.Api.Controllers
 {
     [ApiController]
-    [Route("api/v2/alunos")]
+    [ApiVersion("2")]
+    [Route("api/v{version:apiVersion}/alunos")]
     public class AlunosV2Controller : ControllerBase
     {
         private readonly IAlunoServico _alunoServico;

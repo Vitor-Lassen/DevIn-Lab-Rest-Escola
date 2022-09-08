@@ -50,10 +50,6 @@ namespace Escola.Domain.Services
 
         public List<MateriaDTO> ObterPorNome(string nome)
         {
-            var jaExiste = _materiaRepositorio.ObterPorNome(nome);
-
-            if (jaExiste.Count > 0)
-                throw new DuplicadoException("Matéria já existe");
             return _materiaRepositorio.ObterPorNome(nome).Select(x => new MateriaDTO(x)).ToList();
         }
 

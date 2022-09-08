@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Escola.Api.Config;
 using Escola.Domain.DTO;
 using Escola.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,17 @@ namespace Escola.Api.Controllers
     public class MateriaController : ControllerBase
     {
         private readonly IMateriaServico _materiaServico;
-        private readonly IMemoryCache _cache;
-        public MateriaController(IMateriaServico materiaServico, IMemoryCache cache)
+        private readonly CacheService<MateriaDTO> _cacheServicePorId;
+        private readonly CacheService<IList<MateriaDTO>> _cacheServicePorNome;
+        public MateriaController(IMateriaServico materiaServico, 
+                                 CacheService<MateriaDTO> cacheServicePorId,
+                                 CacheService<IList<MateriaDTO>> cacheServicePorNome)
         {
             _materiaServico = materiaServico;
-            _cache = cache;
+            cacheServicePorId.Config("materiaPI", TimeSpan.FromHours(6));   
+            cacheServicePorNome.Config("materiaPN", TimeSpan.FromHours(6)); 
+            _cacheServicePorId = cacheServicePorId;
+            _cacheServicePorNome = cacheServicePorNome;  
         }
 
         [HttpPost]
@@ -30,36 +37,41 @@ namespace Escola.Api.Controllers
         [HttpDelete("{materiaId}")]
         public IActionResult Delete ( [FromRoute]int materiaId){
             _materiaServico.Excluir(materiaId);
-            _cache.Remove($"materia:{materiaId}");
+            _cacheServicePorId.Remove($"{materiaId}");
             return Ok();
         }
         [HttpPut("{materiaId}")]
         public IActionResult Put ( [FromRoute]int materiaId,[FromBody] MateriaDTO materia){
             materia.Id = materiaId;
             _materiaServico.Atualizar(materia);
-            _cache.Remove($"materia:{materiaId}");
+            _cacheServicePorId.Remove($"{materiaId}");
 
+            _cacheServicePorNome.Remove(materia.Nome);
             
             return Ok();
         }
         //api/materia
         [HttpGet]
         public IActionResult ObterTodos ([FromQuery] string nome){
-            if(!string.IsNullOrEmpty(nome))
-                return Ok(_materiaServico.ObterPorNome(nome));
+            if(!string.IsNullOrEmpty(nome)){
+                if (!_cacheServicePorNome.TryGetValue(nome,out IList<MateriaDTO> materias))
+                {
+                    materias = _materiaServico.ObterPorNome(nome);
+                    _cacheServicePorNome.Set(nome,materias);
+                }
+                return Ok(materias);
+            }
             return Ok(_materiaServico.ObterTodos());
         }
         [HttpGet("{materiaId}")]
         public IActionResult ObterPorId ( [FromRoute]int materiaId){
-            if(!_cache.TryGetValue<MateriaDTO>($"materia:{materiaId}",out MateriaDTO materia))
+            if(!_cacheServicePorId.TryGetValue($"{materiaId}",out MateriaDTO materia))
             {
                 materia = _materiaServico.ObterPorId(materiaId);
-                _cache.Set<MateriaDTO>($"materia:{materiaId}", 
-                                        materia,
-                                        TimeSpan.FromHours(5));
+                _cacheServicePorId.Set(materiaId.ToString(), 
+                                        materia);
             }
             return Ok(materia);
         }
-        
     }
 }

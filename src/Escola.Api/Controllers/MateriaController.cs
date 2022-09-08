@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Escola.Domain.DTO;
 using Escola.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Escola.Api.Controllers
 {
@@ -13,9 +14,11 @@ namespace Escola.Api.Controllers
     public class MateriaController : ControllerBase
     {
         private readonly IMateriaServico _materiaServico;
-        public MateriaController(IMateriaServico materiaServico)
+        private readonly IMemoryCache _cache;
+        public MateriaController(IMateriaServico materiaServico, IMemoryCache cache)
         {
             _materiaServico = materiaServico;
+            _cache = cache;
         }
 
         [HttpPost]
@@ -27,12 +30,16 @@ namespace Escola.Api.Controllers
         [HttpDelete("{materiaId}")]
         public IActionResult Delete ( [FromRoute]int materiaId){
             _materiaServico.Excluir(materiaId);
+            _cache.Remove($"materia:{materiaId}");
             return Ok();
         }
         [HttpPut("{materiaId}")]
         public IActionResult Put ( [FromRoute]int materiaId,[FromBody] MateriaDTO materia){
             materia.Id = materiaId;
             _materiaServico.Atualizar(materia);
+            _cache.Remove($"materia:{materiaId}");
+
+            
             return Ok();
         }
         //api/materia
@@ -44,8 +51,14 @@ namespace Escola.Api.Controllers
         }
         [HttpGet("{materiaId}")]
         public IActionResult ObterPorId ( [FromRoute]int materiaId){
-            
-            return Ok(_materiaServico.ObterPorId(materiaId));
+            if(!_cache.TryGetValue<MateriaDTO>($"materia:{materiaId}",out MateriaDTO materia))
+            {
+                materia = _materiaServico.ObterPorId(materiaId);
+                _cache.Set<MateriaDTO>($"materia:{materiaId}", 
+                                        materia,
+                                        TimeSpan.FromHours(5));
+            }
+            return Ok(materia);
         }
         
     }

@@ -6,6 +6,7 @@ using Escola.Infra.DataBase;
 using Escola.Api.Config; 
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,15 @@ builder.Services.AddScoped<IMateriaServico, MateriaServico>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped(typeof(CacheService<>));
 
-builder.Services.AddApiVersioning();
+builder.Services.AddApiVersioning(options =>
+            {
+                // Retorna os headers "api-supported-versions" e "api-deprecated-versions"
+                // indicando versões suportadas pela API e o que está como deprecated
+                options.ReportApiVersions = true;
+
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+            });
 
 builder.Services.AddVersionedApiExplorer(p =>
             {

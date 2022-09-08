@@ -20,7 +20,7 @@ namespace Escola.Api.Controllers.V2
         }
         [HttpGet]
         public IActionResult ObterTodos(){
-            return Ok(_materiaServico.ObterTodos().Select(x => new MateriaV2DTO(x)));
+            return Ok(_materiaServico.ObterTodos(new Domain.Models.Paginacao(0,5)).Select(x => new MateriaV2DTO(x)));
         } 
         [HttpGet("{id}")]
         public IActionResult ObterPorId([FromRoute] int id){

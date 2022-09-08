@@ -6,7 +6,7 @@ using Escola.Domain.Models;
 
 namespace Escola.Domain.DTO
 {
-    public class MateriaDTO
+    public class MateriaDTO : BaseHateoasDTO
     {
         public int Id { get; set; }
         public string Nome { get; set; }

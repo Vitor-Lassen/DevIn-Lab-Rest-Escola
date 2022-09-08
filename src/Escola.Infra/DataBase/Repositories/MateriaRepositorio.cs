@@ -7,7 +7,7 @@ using Escola.Domain.Models;
 
 namespace Escola.Infra.DataBase.Repositories
 {
-    public class MateriaRepositorio : IMateriaRepositorio
+    public class MateriaRepositorio : IMateriaRepositorio 
     {
         private readonly EscolaDBContexto _contexto;
 
@@ -43,9 +43,11 @@ namespace Escola.Infra.DataBase.Repositories
             return _contexto.Materias.Where(x => x.Nome == nome).ToList();
         }
 
-        public IList<Materia> ObterTodos()
+        public IList<Materia> ObterTodos( Paginacao paginacao)
         {
-            return _contexto.Materias.ToList();
+            return _contexto.Materias.Take(paginacao.Take)
+                                    .Skip(paginacao.Skip)
+                                    .ToList();
         }
     }
 }

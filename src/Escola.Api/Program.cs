@@ -12,6 +12,9 @@ builder.Services.AddDbContext<EscolaDBContexto>();
 builder.Services.AddScoped<IAlunoRepositorio, AlunoRepositorio>();
 builder.Services.AddScoped<IAlunoServico, AlunoServico>();
 
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped(typeof(CacheService<>));
+
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();

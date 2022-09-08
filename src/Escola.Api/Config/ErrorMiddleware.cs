@@ -49,7 +49,7 @@ namespace Escola.Api.Config
                 status = HttpStatusCode.NotAcceptable;
                 message = ex.Message;
             }
-            if (ex is EhMenorIdadeException)
+            else if (ex is EhMenorIdadeException)
             {
                 status = HttpStatusCode.NotAcceptable;
                 message = ex.Message;

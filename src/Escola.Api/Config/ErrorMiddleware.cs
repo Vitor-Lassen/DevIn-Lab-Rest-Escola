@@ -16,10 +16,12 @@ namespace Escola.Api.Config
         {
             _next = next;
         }
+        //implementa o invoke
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
+                //precisa dar o next para continuar a pilha de execuções
                 await _next(context);
             }
             catch (Exception ex)

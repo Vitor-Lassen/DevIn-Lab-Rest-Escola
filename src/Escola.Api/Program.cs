@@ -13,6 +13,7 @@ builder.Services.AddScoped<IAlunoRepositorio, AlunoRepositorio>();
 builder.Services.AddScoped<IAlunoServico, AlunoServico>();
 
 builder.Services.AddMemoryCache();
+//pode colocar qualquer tipo genérico ali no typeof que ele vai injetar
 builder.Services.AddScoped(typeof(CacheService<>));
 
 

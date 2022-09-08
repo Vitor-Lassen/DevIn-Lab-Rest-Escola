@@ -68,7 +68,10 @@ namespace Escola.Api.Controllers
         {
             var cookie = Request.Cookies["TesteCookie"];
             var uri = $"{Request.Scheme}://{Request.Host}";
+
+            //CACHE
             AlunoDTO aluno;
+            //procura se existe o aluno, se não existir cria no cache e retorna o aluno criado
             if (!_alunoCache.TryGetValue($"{id}", out aluno))
             {
                 aluno = _alunoServico.ObterPorId(id);
@@ -90,6 +93,7 @@ namespace Escola.Api.Controllers
 
             aluno.Id = id;
             _alunoServico.Atualizar(aluno);
+            //atualiza o cache do aluno
             _alunoCache.Set($"{id}", aluno);
             return Ok();
 
@@ -98,6 +102,7 @@ namespace Escola.Api.Controllers
         public IActionResult Deletar(Guid id)
         {
             _alunoServico.Excluir(id);
+            //remove o cache do aluno
             _alunoCache.Remove($"{id}");
             return StatusCode(StatusCodes.Status204NoContent);
         }

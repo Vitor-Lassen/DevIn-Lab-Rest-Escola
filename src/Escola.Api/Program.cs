@@ -9,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<EscolaDBContexto>();
 
-builder.Services.AddScoped<IAlunoRepositorio,AlunoRepositorio>();
-builder.Services.AddScoped<IAlunoServico,AlunoServico>();
+builder.Services.AddScoped<IAlunoRepositorio, AlunoRepositorio>();
+builder.Services.AddScoped<IAlunoServico, AlunoServico>();
 
 
 builder.Services.AddControllers();
@@ -18,6 +18,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.MapControllers();
+
+//injeção do middleware
 app.UseMiddleware<ErrorMiddleware>();
 
 if (app.Environment.IsDevelopment())

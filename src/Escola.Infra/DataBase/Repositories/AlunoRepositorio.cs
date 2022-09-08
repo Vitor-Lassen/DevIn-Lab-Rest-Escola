@@ -46,8 +46,10 @@ namespace Escola.Infra.DataBase.Repositories
         public IList<Aluno> ObterTodos(Paginacao paginacao)
         {
             return _contexto.Alunos
-                            .Take(paginacao.Take)
-                            .Skip(paginacao.Skip)
+                            //t&s métodos para fazer paginação
+                            //pega 10 usuários e mostra apartir do 4 - T100 S4 - mostra 5678910
+                            .Take(paginacao.Take) //pega quantidade de páginas
+                            .Skip(paginacao.Skip) //pula 
                             .ToList();
         }
         public int ObterTotal()

@@ -8,16 +8,19 @@ using Escola.Domain.DTO;
 using Escola.Domain.Interfaces.Services;
 using Escola.Domain.Exceptions;
 using Escola.Domain.Models;
+using AutoMapper;
 
 namespace Escola.Api.Controllers
 {
     [ApiController]
     [Route("api/v2/alunos")]
     public class AlunosV2Controller : ControllerBase
-    {
+    {   
+        private readonly IMapper _mapper;
         private readonly IAlunoServico _alunoServico;
-        public AlunosV2Controller(IAlunoServico alunoServico)
+        public AlunosV2Controller(IAlunoServico alunoServico, IMapper mapper)
         {
+            _mapper = mapper;
             _alunoServico = alunoServico;
         }
         [HttpGet]
@@ -28,12 +31,12 @@ namespace Escola.Api.Controllers
 
                 Response.Headers.Add("X-Paginacao-TotalResgistros",totalRegistros.ToString() );
 
-                return Ok(_alunoServico.ObterTodos(paginacao).Select(x => new AlunoV2DTO(x)));
+                return Ok();//_alunoServico.ObterTodos(paginacao).Select(x => new AlunoV2DTO(x)));
         }
         [HttpGet("{id}")]
         public IActionResult ObterPorId(Guid id){
             try{
-             return Ok(new AlunoV2DTO(_alunoServico.ObterPorId(id)));
+             return Ok(_mapper.Map<AlunoV2DTO>(_alunoServico.ObterPorId(id)));
             }
             catch{
                 return StatusCode(StatusCodes.Status500InternalServerError);
@@ -41,7 +44,7 @@ namespace Escola.Api.Controllers
         }
         [HttpPost]
         public IActionResult Inserir (AlunoV2DTO aluno){
-            _alunoServico.Inserir(new AlunoDTO(aluno));
+            _alunoServico.Inserir(_mapper.Map<AlunoDTO>(aluno));
 
             return StatusCode(StatusCodes.Status201Created);
         }
@@ -49,7 +52,7 @@ namespace Escola.Api.Controllers
         public IActionResult Atualizar(Guid id, [FromBody] AlunoV2DTO aluno){
             try{
                 aluno.Id=id;
-                _alunoServico.Atualizar(new AlunoDTO(aluno));
+                //_alunoServico.Atualizar(new AlunoDTO(aluno));
                 return Ok();
             }
             catch{

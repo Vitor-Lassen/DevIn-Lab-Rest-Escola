@@ -4,17 +4,20 @@ using Escola.Infra.DataBase.Repositories;
 using Escola.Domain.Services;
 using Escola.Infra.DataBase;
 using Escola.Api.Config;
+using Escola.Api.Config.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<EscolaDBContexto>();
 
-builder.Services.AddScoped<IAlunoRepositorio,AlunoRepositorio>();
+RepositoryIoC.RegisterServices(builder.Services);
+
 builder.Services.AddScoped<IAlunoServico,AlunoServico>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped(typeof(CacheService<>));
 
+builder.Services.AddSingleton(AutoMapperConfig.Configure());
 
 builder.Services.AddControllers()
                 .AddNewtonsoftJson();

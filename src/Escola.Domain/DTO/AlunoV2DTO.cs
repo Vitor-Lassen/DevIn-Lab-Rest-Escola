@@ -12,15 +12,7 @@ namespace Escola.Domain.DTO
         {
             
         }
-        public AlunoV2DTO(AlunoDTO aluno)
-        {
-            Id = aluno.Id;
-            Nome = aluno.Nome;
-            Email = aluno.Email;
-            RA = aluno.Matricula;
-            Sobrenome = aluno.Sobrenome;
-            DataNascimento = aluno.DataNascimento;
-        }
+       
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public int RA { get; set; }

@@ -10,7 +10,7 @@ namespace Escola.Domain.DTO
     {
         public AlunoDTO()
         {
-            
+
         }
         public AlunoDTO(Aluno aluno)
         {
@@ -38,10 +38,12 @@ namespace Escola.Domain.DTO
         public string Email { get; set; }
         public DateTime DataNascimento { get; set; }
 
-        public string Boletim { get {return $"http://localhost:5216/api/alunos/{Id}/Boletims" ; } private set {}}
+        //hateoas
+        //retorna o link do boletim de acordo com o id
+        public string Boletim { get { return $"http://localhost:5216/api/alunos/{Id}/Boletims"; } private set { } }
 
-        // private string _boletim;
-
+        //mesma coisa da prop só que mais anitigo
+        // private string _boletim; -> field da prop boletim
         // public void SetBoletim( string value){
         //     if (Nome!= null)
         //     _boletim = value;
@@ -50,6 +52,6 @@ namespace Escola.Domain.DTO
         //     return _boletim;
         // }
 
-        
+
     }
 }

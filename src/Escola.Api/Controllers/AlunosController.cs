@@ -35,11 +35,13 @@ namespace Escola.Api.Controllers
 
                 var totalRegistros = _alunoServico.ObterTotal();
 
+                //volta a resposta da paginação na header
                 Response.Headers.Add("X-Paginacao-TotalResgistros", totalRegistros.ToString());
 
+                //cookie tipo um local storage
                 Response.Cookies.Append("TesteCookie",
                             Newtonsoft.Json.JsonConvert.SerializeObject(paginacao),
-                            new CookieOptions()
+                            new CookieOptions() //opções de configurações
                             {
                                 Expires = DateTimeOffset.Now.AddDays(5),
                                 //MaxAge = new TimeSpan(5,0,0,0)
@@ -67,6 +69,7 @@ namespace Escola.Api.Controllers
         public IActionResult ObterPorId(Guid id)
         {
             var cookie = Request.Cookies["TesteCookie"];
+            //monta a uri do link do hateoas apartir do cookie
             var uri = $"{Request.Scheme}://{Request.Host}";
 
             //CACHE
@@ -131,6 +134,8 @@ namespace Escola.Api.Controllers
                 }
             };
 
+            //validação pelos links
+            //se o aluno tiver mais de 24 ele pode fazer a matricula por ex
             if ((DateTime.Now.Year - aluno.DataNascimento.Year) >= 24)
             {
                 hateoas.Add(
@@ -144,6 +149,8 @@ namespace Escola.Api.Controllers
             }
             return hateoas;
         }
+
+        //SISTEMA DE NAVEGAÇÃO
         private List<HateoasDTO> GetHateoasForAll(string baseURI, int take, int skip, int ultimo)
         {
             var hateoas = new List<HateoasDTO>() {

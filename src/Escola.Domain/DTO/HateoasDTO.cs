@@ -10,5 +10,7 @@ namespace Escola.Domain.DTO
         public string Rel { get; set; }
         public string URI { get; set; }
         public string Type { get; set; }
+
+        //propriedades básicas do HAL
     }
 }

@@ -16,7 +16,8 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped(typeof(CacheService<>));
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+                .AddNewtonsoftJson();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

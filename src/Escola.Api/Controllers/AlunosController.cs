@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Escola.Domain.Exceptions;
 using Escola.Domain.Models;
 using Escola.Api.Config;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Escola.Api.Controllers
 {
@@ -83,6 +84,25 @@ namespace Escola.Api.Controllers
             return Ok();
            
         }
+
+        [HttpPatch("{id}")]
+        public IActionResult Patch(Guid id, 
+                            [FromBody] JsonPatchDocument<AlunoDTO> alunoPatch)
+        {
+            var alunoDB = _alunoServico.ObterPorId(id);
+
+            alunoPatch.ApplyTo(alunoDB, ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            alunoDB.Id=id;
+            _alunoServico.Atualizar(alunoDB);
+           
+            return Ok();
+        }
+
+
         [HttpDelete("{id}")]
         public IActionResult Deletar(Guid id){
                 _alunoServico.Excluir(id);
